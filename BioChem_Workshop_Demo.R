@@ -43,7 +43,7 @@ for (i in 1:length(posixct_indices)){
 }
 
 # Then we can export to csv
-write.csv(data, 'BCD2022666_BioChem.csv', row.names = FALSE)
+write.csv(data, 'BCD2022666_June_BioChem.csv', row.names = FALSE)
 
 
 
