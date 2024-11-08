@@ -6,24 +6,34 @@
 library(ROracle)
 library(tidyverse)
 
-# load in your biochem credentials
-source('c:/users/ogradye/desktop/biochem_creds.R')
-# biochem.user <- 
-# biochem.password <- 
+# load in your biochem credentials - DO NOT load this file to github
+source('biochem_creds.R')
 
-# test connection
+# create connection
 conn <- dbConnect(dbDriver("Oracle"), biochem.user, biochem.password, dbname = "PTRAN")
 
-# try out a simple query
-query <- "select * FROM biochem.discrete_data WHERE name = 'TEL2022010'" # note lack of ';'
+
+#************************
+
+# write a simple query
+query <- "SELECT * FROM biochem.bcdiscrete_mv WHERE name = 'TEL2022010'" # note lack of ';'
 
 # query BioChem
 data <- dbGetQuery(conn, query)
 
+# print results
+str(data)
 
-# Let's try a more complicated query
+
+#************************
+
+# Let's try a more complicated query:
+
+# read the sql file containing the query (the result is a string)
+query <- paste(scan(file='Query.sql', what=ls(), sep="\n"), collapse=" ")
+
+# replace the string "cruisename" in the query with the cruisename you define here
 cruisename <- 'BCD2022666'
-query <- stringr::str_c(readLines('Query.sql'), collapse = " ")
 query <- gsub(x = query, pattern = 'cruisename', replacement = cruisename)
 
 # query BioChem
@@ -38,8 +48,7 @@ posixct_columns <- sapply(data, inherits, "POSIXct")
 posixct_indices <- which(posixct_columns)
 
 for (i in 1:length(posixct_indices)){
-  data[[posixct_indices[[i]]]] <- as.character(format(data[[posixct_indices[[i]]]],
-                                                      '%d-%b-%y'))
+  data[[posixct_indices[[i]]]] <- format(data[[posixct_indices[[i]]]],'%d-%b-%y')
 }
 
 # Then we can export to csv
