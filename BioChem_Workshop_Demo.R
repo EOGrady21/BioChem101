@@ -1,13 +1,18 @@
 # BioChem Demo
-
 # How to connect to BioChem through R
 
+# # Install the ROracle library - the "Sys.setenv" functions below should set the paths to your copy of Oracle so ROracle can find the files it needs to install properly.
+# Sys.setenv("OCI_LIB64" = "C:\\Oracle\\12.2.0_x64\\cli\\bin")
+# Sys.setenv("OCI_INC" = "C:\\Oracle\\12.2.0_x64\\cli\\oci\\include")
 # install.packages('ROracle')
+
 library(ROracle)
 library(tidyverse)
 
 # load in your biochem credentials - DO NOT load this file to github
-source('biochem_creds.R')
+source('biochem_creds.R') # this file should contain the 2 lines below with your own biochem username and password
+# biochem.user <- "YOUR_BIOCHEM_USERNAME"
+# biochem.password <- "YOUR_BIOCHEM_PASSWORD"
 
 # create connection
 conn <- dbConnect(dbDriver("Oracle"), biochem.user, biochem.password, dbname = "PTRAN")
@@ -68,10 +73,11 @@ query <- paste(scan(file='Query_replicates.sql', what=ls(), sep="\n"), collapse=
 query <- gsub(x = query, pattern = 'cruisename', replacement = cruisename)
 data2b <- dbGetQuery(conn, query)
 
-# join the discrete_mv table to the replicates table
+# join the flat table to the replicates table
 data2a <- data2a %>% 
   dplyr::rename(DISCRETE_VALUE=DATA_VALUE, DISCRETE_QC=DATA_QC_CODE) %>%
-  dplyr::select(DISCRETE_DETAIL_SEQ, NAME, EVENT_START, HEADER_START_DEPTH, COLLECTOR_SAMPLE_ID, METHOD, DISCRETE_QC, DISCRETE_VALUE, AVERAGED_DATA)
+  dplyr::select(DISCRETE_DETAIL_SEQ, NAME, EVENT_START, HEADER_START_DEPTH,
+                COLLECTOR_SAMPLE_ID, METHOD, DISCRETE_QC, DISCRETE_VALUE, AVERAGED_DATA)
 data2b <- data2b %>%
   dplyr::rename(REPLICATE_VALUE=DATA_VALUE, REPLICATE_QC=DATA_QC_CODE) %>%
   dplyr::select(DISCRETE_DETAIL_SEQ, REPLICATE_QC, REPLICATE_VALUE)
