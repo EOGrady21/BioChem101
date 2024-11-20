@@ -57,7 +57,7 @@ write.csv(data1, 'BCD2022666_June_BioChem.csv', row.names = FALSE)
 
 #************************
 
-# Look at the replicates the averaged records:
+# Look at the replicates of the averaged records:
 
 query <- paste(scan(file='Query_replicates.sql', what=ls(), sep="\n"), collapse=" ")
 query <- gsub(x = query, pattern = 'cruisename', replacement = cruisename)
