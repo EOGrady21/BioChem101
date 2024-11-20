@@ -70,11 +70,11 @@ data2b <- dbGetQuery(conn, query)
 
 # join the discrete_mv table to the replicates table
 data2a <- data2a %>% 
-  dplyr::rename(DISCRETE_VALUE=DATA_VALUE) %>%
-  dplyr::select(DISCRETE_DETAIL_SEQ, NAME, EVENT_START, COLLECTOR_SAMPLE_ID, METHOD, DISCRETE_VALUE, AVERAGED_DATA)
+  dplyr::rename(DISCRETE_VALUE=DATA_VALUE, DISCRETE_QC=DATA_QC_CODE) %>%
+  dplyr::select(DISCRETE_DETAIL_SEQ, NAME, EVENT_START, HEADER_START_DEPTH, COLLECTOR_SAMPLE_ID, METHOD, DISCRETE_QC, DISCRETE_VALUE, AVERAGED_DATA)
 data2b <- data2b %>%
-  dplyr::rename(REPLICATE_VALUE=DATA_VALUE) %>%
-  dplyr::select(DISCRETE_DETAIL_SEQ, REPLICATE_VALUE)
+  dplyr::rename(REPLICATE_VALUE=DATA_VALUE, REPLICATE_QC=DATA_QC_CODE) %>%
+  dplyr::select(DISCRETE_DETAIL_SEQ, REPLICATE_QC, REPLICATE_VALUE)
 data2 <- dplyr::full_join(data2a, data2b, by="DISCRETE_DETAIL_SEQ")
 
 data2
