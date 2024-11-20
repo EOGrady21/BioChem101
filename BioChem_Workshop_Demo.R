@@ -59,9 +59,23 @@ write.csv(data1, 'BCD2022666_June_BioChem.csv', row.names = FALSE)
 
 # Look at the replicates of the averaged records:
 
+# get all columns from the flat table
+query <- "SELECT * FROM biochem.bcdiscrete_mv WHERE name = 'BCD2022666'"
+data2a <- dbGetQuery(conn, query)
+
+# get all columns from the replicates table
 query <- paste(scan(file='Query_replicates.sql', what=ls(), sep="\n"), collapse=" ")
 query <- gsub(x = query, pattern = 'cruisename', replacement = cruisename)
-data2 <- dbGetQuery(conn, query)
+data2b <- dbGetQuery(conn, query)
 
+# join the discrete_mv table to the replicates table
+data2a <- data2a %>% 
+  dplyr::rename(DISCRETE_VALUE=DATA_VALUE) %>%
+  dplyr::select(DISCRETE_DETAIL_SEQ, NAME, EVENT_START, COLLECTOR_SAMPLE_ID, METHOD, DISCRETE_VALUE, AVERAGED_DATA)
+data2b <- data2b %>%
+  dplyr::rename(REPLICATE_VALUE=DATA_VALUE) %>%
+  dplyr::select(DISCRETE_DETAIL_SEQ, REPLICATE_VALUE)
+data2 <- dplyr::full_join(data2a, data2b, by="DISCRETE_DETAIL_SEQ")
 
+data2
 
