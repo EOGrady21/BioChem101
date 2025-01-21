@@ -1,6 +1,7 @@
 --SELECT *
 --FROM biochem.discrete_data
---WHERE some condition;
+--WHERE some condition
+-- AND some more things;
 
 -- Grab all average BBMP data from 2022
 SELECT *
@@ -86,7 +87,9 @@ dd.detection_limit
 FROM biochem.bcdiscrete_mv dd, biochem.bcdiscretereplicates dr
 WHERE dd.discrete_detail_seq = dr.discrete_detail_seq
 AND dd.name = 'BCD2022667'
-AND dd.averaged_Data = 'Y';
+AND dd.averaged_data = 'Y';
+
+
 
 
 
